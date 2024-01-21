@@ -14,6 +14,8 @@ function player:load(world)
     self.shape = love.physics.newRectangleShape(self.width, self.height)
     self.fixture = love.physics.newFixture(self.body, self.shape)
     self.fixture:setUserData("Player")
+
+    return self
 end
 
 function player:update(dt)
