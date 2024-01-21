@@ -1,11 +1,12 @@
 local love = require("love")
 local player = require("characters/player")
+local config = require("config")
 
 function love.load()
     love.physics.setMeter(64)
-    world = love.physics.newWorld(0, 9.81*64, true)
+    world = love.physics.newWorld(0, config.GRAVITY, true)
   
-  
+
     ground = {}
     ground.body = love.physics.newBody(world, 650/2, 650-50/2)
     ground.shape = love.physics.newRectangleShape(650, 50)
