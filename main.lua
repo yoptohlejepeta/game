@@ -1,12 +1,13 @@
 local love = require("love")
 local player = require("characters/player")
 local config = require("config")
+local level = require("level")
 
 function love.load()
     love.physics.setMeter(64)
     world = love.physics.newWorld(0, config.GRAVITY, true)
+    world:setCallbacks(beginContact, endContact)
   
-
     ground = {}
     ground.body = love.physics.newBody(world, 650/2, 650-50/2)
     ground.shape = love.physics.newRectangleShape(650, 50)
@@ -21,13 +22,13 @@ function love.load()
   
   function love.update(dt)
     world:update(dt)
-  
+
     if love.keyboard.isDown("right") then
       player.body:applyForce(400, 0)
     elseif love.keyboard.isDown("left") then
       player.body:applyForce(-400, 0)
-    elseif love.keyboard.isDown("up") then
-      player.body:applyLinearImpulse(0, -30)
+    elseif love.keyboard.isDown("up") and player.grounded == true then
+      player.body:applyLinearImpulse(0, -100)
     end
   end
   
@@ -41,3 +42,18 @@ function love.load()
     love.graphics.polygon("fill", player.body:getWorldPoints(player.shape:getPoints()))
   
   end
+
+function beginContact(a, b, coll)
+    local x, y = coll:getNormal()
+    if (x == 0 and y == -1) and (a == player.fixture or b == player.fixture) then
+        player.grounded = true
+    end
+end
+
+
+function endContact(a, b, coll)
+    local x, y = coll:getNormal()
+    if a == player.fixture or b == player.fixture then
+        player.grounded = false
+    end
+end
