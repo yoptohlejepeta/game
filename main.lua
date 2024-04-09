@@ -7,8 +7,8 @@ function love.load()
 
     enemies = {}
     player = {}
-    player.x = 50
-    player.y = 50
+    player.x = love.graphics.getWidth() / 2
+    player.y = love.graphics.getHeight() / 2
     player.speed = 200
     player.direction = "down"
     player.idle = true
