@@ -14,3 +14,4 @@ love .
 - <https://deep-fold.itch.io/pixel-planet-generator>
 - [shieldmaiden sprites](https://opengameart.org/content/animated-shield-maiden-sprite-busts)
 - [characters 8d](https://sagak-art-pururu.itch.io/24pxminicharacters)
+- [STI](https://github.com/karai17/Simple-Tiled-Implementation)

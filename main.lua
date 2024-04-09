@@ -1,10 +1,15 @@
 local love = require("love")
+local math = require("math")
 
 function love.load()
+    -- disable blur
+    love.graphics.setDefaultFilter("nearest", "nearest")
+
+    enemies = {}
     player = {}
     player.x = 50
     player.y = 50
-    player.speed = 100
+    player.speed = 200
     player.direction = "down"
     player.idle = true
     -- 128x256
@@ -13,7 +18,7 @@ function love.load()
     player.quads = {}
     cols = 4
     rows = 8
-    -- 52x52
+
     frameWidth = player.spriteSheet:getWidth() / cols
     frameHeight = player.spriteSheet:getHeight() / rows
 
@@ -32,6 +37,26 @@ function love.load()
 end
 
 function love.update(dt)
+    if #enemies == 0 then
+        local number_of_enemies = math.random(1, 5)
+        for i = 1, number_of_enemies do
+            enemies[i] = {}
+            enemies[i].x = 0
+            enemies[i].y = math.random(0, love.graphics.getHeight())
+            enemies[i].speed = math.random(50, 150)
+        end
+    -- going after player
+    else
+        for i = 1, #enemies do
+            local vector = {x = enemies[i].x - player.x, y = enemies[i].y - player.y}
+            local length = math.sqrt(vector.x^2 + vector.y^2)
+            vector.x = vector.x / length
+            vector.y = vector.y / length
+            enemies[i].x = enemies[i].x - vector.x * enemies[i].speed * dt
+            enemies[i].y = enemies[i].y - vector.y * enemies[i].speed * dt
+        end
+    end
+
     local moveX, moveY = 0, 0
 
     if love.keyboard.isDown("right") then
@@ -123,7 +148,20 @@ function love.draw()
     elseif player.direction == "down_left" then
       row = 8
     end
-    love.graphics.scale(3)
-    love.graphics.draw(player.spriteSheet, player.quads[row][player.currentFrame], player.x, player.y)
 
+    for i = 1, #enemies do
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.rectangle("fill", enemies[i].x, enemies[i].y, 50, 50)
+    end
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
+    local scaleFactor = 5
+
+    local drawX = player.x - (frameWidth / 2) * scaleFactor
+    local drawY = player.y - (frameHeight / 2) * scaleFactor
+
+    love.graphics.draw(player.spriteSheet, player.quads[row][player.currentFrame], drawX, drawY, 0, scaleFactor)
+
+    love.graphics.circle("fill", player.x, player.y, 5)
 end
