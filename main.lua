@@ -32,7 +32,7 @@ function love.load()
     player = player_load(world)
 
     -- Initialize enemies
-    for i = 1, 5 do
+    for i = 1, 10 do
         enemies[i] = {}
         enemies[i].width = 60
         enemies[i].height = 60
