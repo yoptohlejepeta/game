@@ -6,7 +6,7 @@ local player = {
     height = 90,
     speed = 200,
     direction = "down",
-    idle = true,
+    action = "idle",
 
 }
 
@@ -44,48 +44,51 @@ end
 
 
 function player:update(dt)
+
+    -- if self.attack then
+
     local moveX, moveY = 0, 0
 
     if love.keyboard.isDown("right") then
         moveX = moveX + 1
         self.direction = "right"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("left") then
         moveX = moveX - 1
         self.direction = "left"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("down") then
         moveY = moveY + 1
         self.direction = "down"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("up") then
         moveY = moveY - 1
         self.direction = "up"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("up") and love.keyboard.isDown("right") then
         self.direction = "up_right"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("up") and love.keyboard.isDown("left") then
         self.direction = "up_left"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("down") and love.keyboard.isDown("right") then
         self.direction = "down_right"
-        self.idle = false
+        self.action = "move"
     end
     if love.keyboard.isDown("down") and love.keyboard.isDown("left") then
         self.direction = "down_left"
-        self.idle = false
+        self.action = "move"
     end
 
 
     if moveX == 0 and moveY == 0 then
-        self.idle = true
+        self.action = "idle"
     end
 
 
@@ -97,7 +100,7 @@ function player:update(dt)
 
     self.body:setLinearVelocity(moveX * self.speed, moveY * self.speed)
 
-    if self.idle then
+    if self.action == "idle" then
         self.currentFrame = 1
     else
         self.animationTimer = self.animationTimer - dt
@@ -143,6 +146,16 @@ function player:draw(hitbox)
     if hitbox == true then
         love.graphics.setColor(1, 0, 0)
         love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
+    end
+    
+end
+
+function player:check_state()
+end
+
+function love.keypressed(key)
+    if key == "space" then
+        player.action = "attack"
     end
     
 end
