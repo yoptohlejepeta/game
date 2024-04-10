@@ -126,6 +126,11 @@ function love.update(dt)
     end
 
 
+    if moveX == 0 and moveY == 0 then
+        player.idle = true
+    end
+
+
     local length = math.sqrt(moveX^2 + moveY^2)
     if length ~= 0 then
         moveX = moveX / length
