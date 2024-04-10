@@ -8,7 +8,7 @@ function beginContact(a, b, col)
     local aData = a:getUserData()
     local bData = b:getUserData()
 
-    if aData == "player" and bData == "enemy" then
+    if aData.type == "player" and bData.type == "enemy" then
         local playerBody = a:getBody()
         local nx, ny = col:getNormal()
         local impulseMagnitude = 10000
@@ -16,6 +16,25 @@ function beginContact(a, b, col)
         playerBody:applyLinearImpulse(-nx * impulseMagnitude, -ny * impulseMagnitude)
 
         playerBody:setLinearDamping(5)
+    elseif aData.type == "weapon" and bData.type == "enemy" then
+        print("hit")
+        b:getBody():destroy()
+        for i, enemy in ipairs(enemies) do
+
+            if i == bData.id then
+                table.remove(enemies, i)
+                break
+            end
+        end
+    elseif aData.type == "enemy" and bData.type == "weapon" then
+        print("hit")
+        a:getBody():destroy()
+        for i, enemy in ipairs(enemies) do
+            if i == aData.id then
+                table.remove(enemies, i)
+                break
+            end
+        end
     end
 end
 
@@ -32,7 +51,7 @@ function love.load()
     player = player_load(world)
 
     -- Initialize enemies
-    for i = 1, 10 do
+    for i = 1, 1 do
         enemies[i] = {}
         enemies[i].width = 60
         enemies[i].height = 60
@@ -40,7 +59,7 @@ function love.load()
         enemies[i].body = love.physics.newBody(world, utils.random_choice(0, love.graphics.getWidth()), math.random(0, love.graphics.getHeight()), "dynamic")
         enemies[i].shape = love.physics.newRectangleShape(enemies[i].width, enemies[i].height)
         enemies[i].fixture = love.physics.newFixture(enemies[i].body, enemies[i].shape)
-        enemies[i].fixture:setUserData("enemy")
+        enemies[i].fixture:setUserData({type = "enemy", id = i})
 
         enemies[i].spriteSheet = love.graphics.newImage("sprites/demon_shug.png")
         demonFrameWidth = enemies[i].spriteSheet:getWidth()

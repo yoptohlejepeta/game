@@ -7,6 +7,13 @@ local player = {
     speed = 200,
     direction = "down",
     action = "idle",
+    attack = {
+        width = 100,
+        height = 90,
+        body = nil,
+        shape = nil,
+        fixture = nil,
+    }
 
 }
 
@@ -16,7 +23,7 @@ function player_load(world)
     player.body:setFixedRotation(true)
     player.shape = love.physics.newRectangleShape(player.width, player.height)
     player.fixture = love.physics.newFixture(player.body, player.shape)
-    player.fixture:setUserData("player")
+    player.fixture:setUserData({type = "player"})
 
     player.spriteSheet = love.graphics.newImage("sprites/images/Characters/Knight1_Move.png")
 
@@ -54,6 +61,7 @@ function player:update(dt)
             self.currentFrame = self.currentFrame % cols + 1
             self.attackTimer = 0.5
             self.action = "idle"
+            self.attack.body:destroy()
         end
     end
 
@@ -157,6 +165,9 @@ function player:draw(hitbox)
     if hitbox == true then
         love.graphics.setColor(1, 0, 0)
         love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
+        if self.action == "attack" then
+            love.graphics.polygon("line", self.attack.body:getWorldPoints(self.attack.shape:getPoints()))
+        end
     end
     
 end
@@ -190,9 +201,15 @@ function player:check_state()
 end
 
 function love.keypressed(key)
-    if key == "space" then
+    if key == "space" and (player.action == "idle" or player.action == "move") then
         player.currentFrame = 1
         player.action = "attack"
+
+        player.attack.body = love.physics.newBody(world, player.body:getX() + player.width + player.width / 2, player.body:getY(), "static")
+        player.attack.body:setFixedRotation(true)
+        player.attack.shape = love.physics.newRectangleShape(player.attack.width, player.attack.height)
+        player.attack.fixture = love.physics.newFixture(player.attack.body, player.attack.shape)
+        player.attack.fixture:setUserData({type="weapon"})
     end
     
 end
